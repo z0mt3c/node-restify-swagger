@@ -1,0 +1,39 @@
+{
+    "name": "node-restify-swagger",
+    "version": "0.0.1",
+    "author": {
+        "name": "Timo Behrmann"
+    },
+    "keywords": [
+        "rest",
+        "api",
+        "restify",
+        "validation"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/z0mt3c/node-restify-swagger.git"
+    },
+    "bugs": {
+        "url": "https://github.com/z0mt3c/node-restify-swagger/issues"
+    },
+    "scripts": {
+        "test": "grunt test"
+    },
+    "main": "index",
+    "readmeFilename": "README.md",
+    "dependencies": {
+        "underscore": "1.5.1",
+        "underscore.string": "2.3.2"
+    },
+    "devDependencies": {
+        "restify": "2.6.0",
+        "grunt": "~0.4.1",
+        "grunt-contrib-jshint": "~0.6.0",
+        "grunt-contrib-watch": "~0.4.4",
+        "grunt-mocha-cli": "~1.0.1",
+        "matchdep": "~0.1.1",
+        "should": "~1.2.2",
+        "sinon": "~1.7.3"
+    }
+}
