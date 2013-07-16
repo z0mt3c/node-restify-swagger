@@ -27,7 +27,7 @@
     "readmeFilename": "README.md",
     "dependencies": {
         "underscore": "1.5.1",
-        "underscore.string": "2.3.2",
+        "underscore.string": "2.3.3",
         "swagger-doc": "0.2.0",
         "lingo":"*",
         "path": "*"

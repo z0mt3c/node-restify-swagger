@@ -5,7 +5,9 @@
 var assert = require('assert');
 var should = require('should');
 var sinon = require('sinon');
+var _ = require('underscore');
 var index = require('../lib/index');
+var restify = require('restify');
 
 describe('test', function () {
     it('_convertToSwagger', function (done) {
@@ -60,6 +62,7 @@ describe('test', function () {
         index.findOrCreateResource(resource, options).should.equal(resourceObj);
         server.calledTwice.should.not.be.ok;
         server.restore();
+        index.swagger.resources = [];
         done();
     });
 
@@ -82,32 +85,43 @@ describe('test', function () {
     });
 
     it('loadRestifyRoutes', function (done) {
-        var router = index.server.router = { mounts: [] };
-
-        // throws no error without routes:
-        index.loadRestifyRoutes();
-
-        /*
-        router.mounts.push({
-            path: '/asdf',
-            spec: {
-                method: 'GET',
-                url: '/asdf',
-                validation: { }
+        var server = restify.createServer();
+        server.get({ url: '/asdf/:p1/:p2',
+            swagger: {
+                summary: 'summary',
+                notes: 'notes',
+                nickname: 'nickname'
+            },
+            validation: {
+                q1: { isRequired: true, isIn: ['asdf'], scope: 'query', description: 'description q1'},
+                b1: { isRequired: true, isIn: ['asdf'], scope: 'body', description: 'description b1'},
+                p2: { isRequired: true, isIn: ['asdf'], scope: 'path', description: 'description p2'}
             }
+        }, function (req, res, next) {
+            // not called
+            false.should.be.ok;
         });
 
-        var server = sinon.stub(index.swagger, 'createResource', function (myResource, myOptions) {
-            return {};
-        });
-
-        var serverGet = sinon.stub(index.swagger.server, 'get', function () { return {}; });
-
+        index.configure(server, {});
         index.loadRestifyRoutes();
 
-        server.restore();
-        serverGet.restore();
-        */
+        index.swagger.resources.length.should.equal(1);
+        var swaggerResource = index.swagger.resources[0];
+        swaggerResource.models.AsdfP1P2Model.should.exist;
+        swaggerResource.models.AsdfP1P2Model.properties.b1.should.exist;
+        swaggerResource.models.AsdfP1P2Model.properties.b1.allowableValues.should.exist;
+        swaggerResource.models.AsdfP1P2Model.properties.b1.allowableValues.values[0].should.equal('asdf');
+        swaggerResource.models.AsdfP1P2Model.properties.b1.required.should.be.ok;
+
+        var swaggerApi = swaggerResource.apis['/asdf/{p1}/{p2}'];
+        swaggerApi.operations.length.should.equal(1);
+
+        var swaggerOperation = swaggerApi.operations[0];
+        swaggerOperation.notes.should.equal('notes');
+        swaggerOperation.nickname.should.equal('nickname');
+        swaggerOperation.parameters.length.should.equal(4);
+        _.difference(['q1', 'p1', 'p2', 'Body'], _.pluck(swaggerOperation.parameters, 'name')).length.should.equal(0);
+
         done();
     });
 });
