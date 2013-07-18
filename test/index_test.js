@@ -107,11 +107,11 @@ describe('test', function () {
 
         index.swagger.resources.length.should.equal(1);
         var swaggerResource = index.swagger.resources[0];
-        swaggerResource.models.AsdfP1P2Model.should.exist;
-        swaggerResource.models.AsdfP1P2Model.properties.b1.should.exist;
-        swaggerResource.models.AsdfP1P2Model.properties.b1.allowableValues.should.exist;
-        swaggerResource.models.AsdfP1P2Model.properties.b1.allowableValues.values[0].should.equal('asdf');
-        swaggerResource.models.AsdfP1P2Model.properties.b1.required.should.be.ok;
+        swaggerResource.models.AsdfP1P2.should.exist;
+        swaggerResource.models.AsdfP1P2.properties.b1.should.exist;
+        swaggerResource.models.AsdfP1P2.properties.b1.allowableValues.should.exist;
+        swaggerResource.models.AsdfP1P2.properties.b1.allowableValues.values[0].should.equal('asdf');
+        swaggerResource.models.AsdfP1P2.properties.b1.required.should.be.ok;
 
         var swaggerApi = swaggerResource.apis['/asdf/{p1}/{p2}'];
         swaggerApi.operations.length.should.equal(1);
