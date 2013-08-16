@@ -20,10 +20,16 @@ describe('test', function () {
 
     it('_mapToSwaggerType', function (done) {
         index._mapToSwaggerType.should.be.a('function');
-        index._mapToSwaggerType({ isJSONObject: true }).should.equal('JSONObject');
-        index._mapToSwaggerType({ isJSONArray: true }).should.equal('JSONArray');
-        index._mapToSwaggerType('asdfasdf').should.equal('String');
-        index._mapToSwaggerType(null).should.equal('String');
+        index._mapToSwaggerType({ isJSONObject: true }).should.equal('object');
+        index._mapToSwaggerType({ isJSONArray: true }).should.equal('array');
+        index._mapToSwaggerType({ isDate: true }).should.equal('dateTime');
+        index._mapToSwaggerType({ isFloat: true }).should.equal('float');
+        index._mapToSwaggerType({ isBoolean: true }).should.equal('boolean');
+        index._mapToSwaggerType({ swaggerType: 'asdf' }).should.equal('asdf');
+        index._mapToSwaggerType({ isInt: true }).should.equal('integer');
+        index._mapToSwaggerType({  }).should.equal('string');
+        index._mapToSwaggerType('asdfasdf').should.equal('string');
+        index._mapToSwaggerType(null).should.equal('string');
         done();
     });
 
