@@ -43,6 +43,6 @@
         "should": "~1.2.2",
         "sinon": "~1.7.3",
         "grunt-mocha-cov": "0.0.7",
-        "grunt-release": "~0.3.5"
+        "grunt-release": "~0.5.1"
     }
 }
