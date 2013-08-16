@@ -31,7 +31,8 @@
         "underscore.string": "2.3.3",
         "swagger-doc": "0.2.0",
         "lingo": "*",
-        "path": "*"
+        "path": "*",
+        "node-restify-validation": "0.0.x"
     },
     "devDependencies": {
         "restify": "2.6.0",
