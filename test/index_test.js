@@ -11,7 +11,7 @@ var restify = require('restify');
 
 describe('test', function () {
     it('_convertToSwagger', function (done) {
-        index._convertToSwagger.should.be.a('function');
+        index._convertToSwagger.should.have.type('function');
         index._convertToSwagger('hello/:firstParam/:secondParam').should.equal('hello/{firstParam}/{secondParam}');
         index._convertToSwagger('hello/:firstParam/test/:secondParam').should.equal('hello/{firstParam}/test/{secondParam}');
         index._convertToSwagger('hello/:firstParam/test/:secondParam/asdf').should.equal('hello/{firstParam}/test/{secondParam}/asdf');
@@ -19,7 +19,7 @@ describe('test', function () {
     });
 
     it('_mapToSwaggerType', function (done) {
-        index._mapToSwaggerType.should.be.a('function');
+        index._mapToSwaggerType.should.have.type('function');
         index._mapToSwaggerType({ isJSONObject: true }).should.equal('object');
         index._mapToSwaggerType({ isJSONArray: true }).should.equal('array');
         index._mapToSwaggerType({ isDate: true }).should.equal('dateTime');
