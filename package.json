@@ -29,7 +29,6 @@
   "dependencies": {
     "underscore": "~1.5.2",
     "underscore.string": "~2.3.3",
-    "swagger-doc": "~0.2.0",
     "node-restify-validation": "0.0.x",
     "lingo": "0.0.5"
   },
