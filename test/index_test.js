@@ -100,7 +100,6 @@ describe('test', function () {
             },
             validation: {
                 q1: { isRequired: true, isIn: ['asdf'], scope: 'query', description: 'description q1'},
-                p2: { isRequired: true, isIn: ['asdf'], scope: 'path', description: 'description p2'},
                 b1: { isRequired: true, isIn: ['asdf'], defaultValue: 'asdf', scope: 'body', description: 'description b1'},
                 p2: { isRequired: true, isIn: ['asdf'], defaultValue: 'asdf', scope: 'path', description: 'description p2'},
                 p3: { isRequired: true, swaggerType: 'file', scope: 'body', description: 'description p2'}
