@@ -100,7 +100,7 @@ describe('test', function () {
             },
             validation: {
                 q1: { isRequired: true, isIn: ['asdf'], scope: 'query', description: 'description q1'},
-                b1: { isRequired: true, isIn: ['asdf'], scope: 'body', description: 'description b1'},
+                b1: { isRequired: true, isIn: ['asdf'], defaultValue: 'asdf', scope: 'body', description: 'description b1'},
                 p2: { isRequired: true, isIn: ['asdf'], defaultValue: 'asdf', scope: 'path', description: 'description p2'},
                 p3: { isRequired: true, swaggerType: 'file', scope: 'body', description: 'description p2'}
             }
@@ -118,6 +118,7 @@ describe('test', function () {
         var swaggerResource = index.swagger.resources[0];
         swaggerResource.models.AsdfP1P2.should.exist;
         swaggerResource.models.AsdfP1P2.properties.b1.should.exist;
+        swaggerResource.models.AsdfP1P2.properties.b1.defaultValue.should.equal('asdf');
         swaggerResource.models.AsdfP1P2.properties.b1.allowableValues.should.exist;
         swaggerResource.models.AsdfP1P2.properties.b1.allowableValues.values[0].should.equal('asdf');
         swaggerResource.models.AsdfP1P2.properties.b1.required.should.be.ok;
@@ -133,4 +134,128 @@ describe('test', function () {
 
         done();
     });
+    it('loadRestifyRoutesWithResponseModel', function (done) {
+        var server = restify.createServer();
+
+        var Models = {
+            Model : {
+                properties: {
+                    inputValue: {
+                        type: 'string',
+                        name: 'name',
+                        description: 'description',
+                        required: true
+                    }
+                }
+            }
+        };
+
+        server.get({ url: '/model',
+            models: Models,
+            swagger: {
+                summary: 'summary',
+                notes: 'notes',
+                nickname: 'nickname',
+                responseClass: 'Model',
+            },
+            validation: {
+                
+            }
+        }, function (req, res, next) {
+            // not called
+            false.should.be.ok;
+        });
+
+        index.configure(server, {});
+        index.loadRestifyRoutes();
+
+        index.swagger.resources.length.should.equal(2);
+        var swaggerResource = index.swagger.resources[1];
+
+        swaggerResource.models.Model.should.exist;
+        swaggerResource.models.Model.properties.inputValue.should.exist;
+        swaggerResource.models.Model.properties.inputValue.name.should.exist;
+      
+      
+        done();
+    });
+    it('loadRestifyRoutesWithResponseModelSecondRoute', function (done) {
+        var server = restify.createServer();
+
+        var ModelsV1 = {
+            Model : {
+                properties: {
+                    inputValue: {
+                        type: 'string',
+                        name: 'name',
+                        description: 'description',
+                        required: true
+                    }
+                }
+            }
+        };
+
+        server.get({ url: '/model',
+            models: ModelsV1,
+            swagger: {
+                summary: 'summary',
+                notes: 'notes',
+                nickname: 'nickname',
+                responseClass: 'Model',
+            },
+            validation: {
+                
+            }
+        }, function (req, res, next) {
+            // not called
+            false.should.be.ok;
+        });
+
+         var ModelsV2 = {
+            DetailModel : {
+                properties: {
+                    inputValue: {
+                        type: 'string',
+                        name: 'name',
+                        description: 'description',
+                        required: true
+                    }
+                }
+            }
+        };
+
+        server.get({ url: '/model/detail',
+            models: ModelsV2,
+            swagger: {
+                summary: 'summary',
+                notes: 'notes',
+                nickname: 'nickname',
+                responseClass: 'DetailModel',
+            },
+            validation: {
+                
+            }
+        }, function (req, res, next) {
+            // not called
+            false.should.be.ok;
+        });
+
+        index.configure(server, {});
+        index.loadRestifyRoutes();
+
+        index.swagger.resources.length.should.equal(2);
+        var swaggerResource = index.swagger.resources[1];
+
+        swaggerResource.models.DetailModel.should.exist;
+        swaggerResource.models.DetailModel.properties.inputValue.should.exist;
+        swaggerResource.models.DetailModel.properties.inputValue.name.should.exist;
+
+        swaggerResource.models.Model.should.exist;
+        swaggerResource.models.Model.properties.inputValue.should.exist;
+        swaggerResource.models.Model.properties.inputValue.name.should.exist;
+      
+      
+        done();
+    });
+   
 });
