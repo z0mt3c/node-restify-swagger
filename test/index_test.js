@@ -91,7 +91,7 @@ describe('test', function () {
     });
 
     it('loadRestifyRoutes', function (done) {
-        var server = restify.createServer();
+        var server = restify.createServer({});
         server.get({ url: '/asdf/:p1/:p2',
             swagger: {
                 summary: 'summary',
@@ -100,15 +100,19 @@ describe('test', function () {
             },
             validation: {
                 q1: { isRequired: true, isIn: ['asdf'], scope: 'query', description: 'description q1'},
+                p2: { isRequired: true, isIn: ['asdf'], scope: 'path', description: 'description p2'},
                 b1: { isRequired: true, isIn: ['asdf'], defaultValue: 'asdf', scope: 'body', description: 'description b1'},
-                p2: { isRequired: true, isIn: ['asdf'], scope: 'path', description: 'description p2'}
+                p2: { isRequired: true, isIn: ['asdf'], defaultValue: 'asdf', scope: 'path', description: 'description p2'},
+                p3: { isRequired: true, swaggerType: 'file', scope: 'body', description: 'description p2'}
             }
         }, function (req, res, next) {
             // not called
             false.should.be.ok;
         });
 
-        index.configure(server, {});
+        index.configure(server, {     apiDescriptions: {
+            'asdf': 'asdf'
+        }});
         index.loadRestifyRoutes();
 
         index.swagger.resources.length.should.equal(1);
@@ -126,8 +130,8 @@ describe('test', function () {
         var swaggerOperation = swaggerApi.operations[0];
         swaggerOperation.notes.should.equal('notes');
         swaggerOperation.nickname.should.equal('nickname');
-        swaggerOperation.parameters.length.should.equal(4);
-        _.difference(['q1', 'p1', 'p2', 'Body'], _.pluck(swaggerOperation.parameters, 'name')).length.should.equal(0);
+        swaggerOperation.parameters.length.should.equal(5);
+        _.difference(['q1', 'p1', 'p2', 'p3', 'Body'], _.pluck(swaggerOperation.parameters, 'name')).length.should.equal(0);
 
         done();
     });
