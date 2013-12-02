@@ -130,4 +130,49 @@ describe('test', function () {
 
         done();
     });
+    it('loadRestifyRoutesWithResponseModel', function (done) {
+        var server = restify.createServer();
+
+        var Models = {
+            Model : {
+                properties: {
+                    inputValue: {
+                        type: 'string',
+                        name: 'name',
+                        description: 'description',
+                        required: true
+                    }
+                }
+            }
+        };
+
+        server.get({ url: '/model',
+            models: Models,
+            swagger: {
+                summary: 'summary',
+                notes: 'notes',
+                nickname: 'nickname',
+                responseClass: 'Model',
+            },
+            validation: {
+                
+            }
+        }, function (req, res, next) {
+            // not called
+            false.should.be.ok;
+        });
+
+        index.configure(server, {});
+        index.loadRestifyRoutes();
+
+        index.swagger.resources.length.should.equal(2);
+        var swaggerResource = index.swagger.resources[1];
+
+        swaggerResource.models.Model.should.exist;
+        swaggerResource.models.Model.properties.inputValue.should.exist;
+        swaggerResource.models.Model.properties.inputValue.name.should.exist;
+      
+      
+        done();
+    });
 });
