@@ -100,7 +100,7 @@ describe('test', function () {
             },
             validation: {
                 q1: { isRequired: true, isIn: ['asdf'], scope: 'query', description: 'description q1'},
-                b1: { isRequired: true, isIn: ['asdf'], scope: 'body', description: 'description b1'},
+                b1: { isRequired: true, isIn: ['asdf'], defaultValue: 'asdf', scope: 'body', description: 'description b1'},
                 p2: { isRequired: true, isIn: ['asdf'], scope: 'path', description: 'description p2'}
             }
         }, function (req, res, next) {
@@ -115,6 +115,7 @@ describe('test', function () {
         var swaggerResource = index.swagger.resources[0];
         swaggerResource.models.AsdfP1P2.should.exist;
         swaggerResource.models.AsdfP1P2.properties.b1.should.exist;
+        swaggerResource.models.AsdfP1P2.properties.b1.defaultValue.should.equal('asdf');
         swaggerResource.models.AsdfP1P2.properties.b1.allowableValues.should.exist;
         swaggerResource.models.AsdfP1P2.properties.b1.allowableValues.values[0].should.equal('asdf');
         swaggerResource.models.AsdfP1P2.properties.b1.required.should.be.ok;
