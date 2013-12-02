@@ -176,4 +176,83 @@ describe('test', function () {
       
         done();
     });
+    it('loadRestifyRoutesWithResponseModelSecondRoute', function (done) {
+        var server = restify.createServer();
+
+        var ModelsV1 = {
+            Model : {
+                properties: {
+                    inputValue: {
+                        type: 'string',
+                        name: 'name',
+                        description: 'description',
+                        required: true
+                    }
+                }
+            }
+        };
+
+        server.get({ url: '/model',
+            models: ModelsV1,
+            swagger: {
+                summary: 'summary',
+                notes: 'notes',
+                nickname: 'nickname',
+                responseClass: 'Model',
+            },
+            validation: {
+                
+            }
+        }, function (req, res, next) {
+            // not called
+            false.should.be.ok;
+        });
+
+         var ModelsV2 = {
+            DetailModel : {
+                properties: {
+                    inputValue: {
+                        type: 'string',
+                        name: 'name',
+                        description: 'description',
+                        required: true
+                    }
+                }
+            }
+        };
+
+        server.get({ url: '/model/detail',
+            models: ModelsV2,
+            swagger: {
+                summary: 'summary',
+                notes: 'notes',
+                nickname: 'nickname',
+                responseClass: 'DetailModel',
+            },
+            validation: {
+                
+            }
+        }, function (req, res, next) {
+            // not called
+            false.should.be.ok;
+        });
+
+        index.configure(server, {});
+        index.loadRestifyRoutes();
+
+        index.swagger.resources.length.should.equal(2);
+        var swaggerResource = index.swagger.resources[1];
+
+        swaggerResource.models.DetailModel.should.exist;
+        swaggerResource.models.DetailModel.properties.inputValue.should.exist;
+        swaggerResource.models.DetailModel.properties.inputValue.name.should.exist;
+
+        swaggerResource.models.Model.should.exist;
+        swaggerResource.models.Model.properties.inputValue.should.exist;
+        swaggerResource.models.Model.properties.inputValue.name.should.exist;
+      
+      
+        done();
+    });
+   
 });
