@@ -56,7 +56,12 @@ Sample App.js
 
     // accessControl function which will be used by the restifySwagger middleware
     // and resource generation functionality to authorize access to the methods (optional)
-    function accessControl(req, res, api_key) {
+    function accessControl(req, res) {
+
+      var api_key = '';
+      if (typeof req.params.api_key == 'string') {
+        api_key = req.params.api_key;
+      }
 
       // if api_key is valid then return a space seperated list of authorizations
       // the authorizations will be defined on the routes
