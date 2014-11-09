@@ -69,6 +69,7 @@ Sample App.js
 
 	// Test Controller
 	server.get({url: '/get/:name',
+        authorizations: 'account',
 	    swagger: {
 	        summary: 'My hello call description',
 	        notes: 'My hello call notes',
