@@ -10,6 +10,10 @@ var index = require('../lib/index');
 var restify = require('restify');
 
 describe('test', function () {
+    beforeEach(function() {
+        index.swagger.resources = [];
+    });
+
     it('_convertToSwagger', function (done) {
         index._convertToSwagger.should.have.type('function');
         index._convertToSwagger('hello/:firstParam/:secondParam').should.equal('hello/{firstParam}/{secondParam}');
@@ -47,7 +51,7 @@ describe('test', function () {
     });
 
     it('findOrCreateResource', function (done) {
-        index.swagger.resources = [];
+
 
         var resource = '/test';
         var options = {};
