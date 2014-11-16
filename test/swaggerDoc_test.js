@@ -1,5 +1,6 @@
 /*globals describe, it, beforeEach*/
 var assert = require('assert');
+var swagger = require('../lib/swagger-doc.js');
 var Resource = require('../lib/swagger-doc.js').Resource;
 
 describe('Resource', function() {
@@ -68,4 +69,38 @@ describe('Resource', function() {
             assert.equal(op.summary, 'Returns all users');
         });
     });
+
+});
+
+describe('swagger', function() {
+
+    describe('#cleanAuthorizations', function () {
+        it('ensures that the authorizations string is in a proper format', function () {
+            var str = swagger.cleanAuthorizations('XYZ,  ABC');
+            assert.equal(str, 'xyz abc');
+        });
+
+    });
+
+    describe('#getRouteAuthorizations', function () {
+        it('make sure api methods without authorizations are public', function () {
+            var arr = swagger.getRouteAuthorizations(null);
+            assert.equal(arr[0], 'public');
+        });
+
+    });
+
+    describe('#checkAuthorized', function () {
+        it('check to see if user with public and admin authorizations can access admin route', function () {
+            var result = swagger.checkAuthorized(['public', 'admin'], ['admin']);
+            assert.equal(result, true);
+        });
+
+        it('check to see if user with only public authorizations can access admin route', function () {
+            var result = swagger.checkAuthorized(['public'], ['admin']);
+            assert.equal(result, false);
+        });
+
+    });
+
 });

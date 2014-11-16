@@ -10,6 +10,10 @@ var index = require('../lib/index');
 var restify = require('restify');
 
 describe('test', function () {
+    beforeEach(function() {
+        index.swagger.resources = [];
+    });
+
     it('_convertToSwagger', function (done) {
         index._convertToSwagger.should.have.type('function');
         index._convertToSwagger('hello/:firstParam/:secondParam').should.equal('hello/{firstParam}/{secondParam}');
@@ -47,7 +51,7 @@ describe('test', function () {
     });
 
     it('findOrCreateResource', function (done) {
-        index.swagger.resources = [];
+
 
         var resource = '/test';
         var options = {};
@@ -90,6 +94,25 @@ describe('test', function () {
         done();
     });
 
+    it('authorizeAccess', function (done) {
+        var server = restify.createServer({});
+
+        // create accessControl function
+        function accessControl(req, res) {
+          return true;
+        }
+
+        index.configure(server, {     apiDescriptions: {
+          'asdf': 'asdf'
+        }});
+
+        // verify authentication and authorization
+        index.authorizeAccess(accessControl);
+
+
+        done();
+    });
+
     it('loadRestifyRoutes', function (done) {
         var server = restify.createServer({});
         server.get({ url: '/asdf/:p1/:p2',
@@ -102,7 +125,8 @@ describe('test', function () {
                 q1: { isRequired: true, isIn: ['asdf'], scope: 'query', description: 'description q1'},
                 b1: { isRequired: true, isIn: ['asdf'], defaultValue: 'asdf', scope: 'body', description: 'description b1'},
                 p2: { isRequired: true, isIn: ['asdf'], defaultValue: 'asdf', scope: 'path', description: 'description p2'},
-                p3: { isRequired: true, swaggerType: 'file', scope: 'body', description: 'description p2'}
+                p3: { isRequired: true, swaggerType: 'file', scope: 'body', description: 'description p2'},
+                h1: { isRequired: true, isIn: ['asdf'], scope: 'header', description: 'description h1'}
             }
         }, function (req, res, next) {
             // not called
@@ -129,8 +153,8 @@ describe('test', function () {
         var swaggerOperation = swaggerApi.operations[0];
         swaggerOperation.notes.should.equal('notes');
         swaggerOperation.nickname.should.equal('nickname');
-        swaggerOperation.parameters.length.should.equal(5);
-        _.difference(['q1', 'p1', 'p2', 'p3', 'Body'], _.pluck(swaggerOperation.parameters, 'name')).length.should.equal(0);
+        swaggerOperation.parameters.length.should.equal(6);
+        _.difference(['q1', 'p1', 'p2', 'p3', 'h1', 'Body'], _.pluck(swaggerOperation.parameters, 'name')).length.should.equal(0);
 
         done();
     });
@@ -159,7 +183,7 @@ describe('test', function () {
                 responseClass: 'Model',
             },
             validation: {
-                
+
             }
         }, function (req, res, next) {
             // not called
@@ -169,14 +193,14 @@ describe('test', function () {
         index.configure(server, {});
         index.loadRestifyRoutes();
 
-        index.swagger.resources.length.should.equal(2);
-        var swaggerResource = index.swagger.resources[1];
+        index.swagger.resources.length.should.equal(1);
+        var swaggerResource = index.swagger.resources[0];
 
         swaggerResource.models.Model.should.exist;
         swaggerResource.models.Model.properties.inputValue.should.exist;
         swaggerResource.models.Model.properties.inputValue.name.should.exist;
-      
-      
+
+
         done();
     });
     it('loadRestifyRoutesWithResponseModelSecondRoute', function (done) {
@@ -204,7 +228,7 @@ describe('test', function () {
                 responseClass: 'Model',
             },
             validation: {
-                
+
             }
         }, function (req, res, next) {
             // not called
@@ -233,7 +257,7 @@ describe('test', function () {
                 responseClass: 'DetailModel',
             },
             validation: {
-                
+
             }
         }, function (req, res, next) {
             // not called
@@ -243,8 +267,8 @@ describe('test', function () {
         index.configure(server, {});
         index.loadRestifyRoutes();
 
-        index.swagger.resources.length.should.equal(2);
-        var swaggerResource = index.swagger.resources[1];
+        index.swagger.resources.length.should.equal(1);
+        var swaggerResource = index.swagger.resources[0];
 
         swaggerResource.models.DetailModel.should.exist;
         swaggerResource.models.DetailModel.properties.inputValue.should.exist;
@@ -253,9 +277,51 @@ describe('test', function () {
         swaggerResource.models.Model.should.exist;
         swaggerResource.models.Model.properties.inputValue.should.exist;
         swaggerResource.models.Model.properties.inputValue.name.should.exist;
-      
-      
+
+
         done();
     });
-   
+    it('loadRestifyRoutesWithResponseModelAsArray', function (done) {
+        var server = restify.createServer();
+
+        var Models = {
+            Model : {
+                properties: {
+                    inputValue: {
+                        type: 'string',
+                        name: 'name',
+                        description: 'description',
+                        required: true
+                    }
+                }
+            }
+        };
+
+        server.get({ url: '/modelarray',
+            models: Models,
+            swagger: {
+                summary: 'summary',
+                notes: 'notes',
+                nickname: 'nickname'
+            },
+            validation: {
+                models: { isRequired: true, swaggerType: 'Model', type: 'array', scope: 'body' }
+            }
+        }, function (req, res, next) {
+            // not called
+            false.should.be.ok;
+        });
+
+        index.configure(server, {});
+        index.loadRestifyRoutes();
+
+        index.swagger.resources.length.should.equal(1);
+        var swaggerResource = index.swagger.resources[0];
+
+        swaggerResource.models.Modelarray.should.exist;
+        swaggerResource.models.Modelarray.properties.models.type.should.equal('array');
+        swaggerResource.models.Modelarray.properties.models.dataType.should.equal('Model');
+
+        done();
+    });
 });
