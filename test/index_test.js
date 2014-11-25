@@ -94,6 +94,26 @@ describe('test', function () {
         done();
     });
 
+    it('authorizeAccess', function (done) {
+        var server = restify.createServer({});
+
+        // create accessControl function
+        function accessControl(req, res) {
+            return true;
+        }
+
+        index.configure(server, {     apiDescriptions: {
+            'asdf': 'asdf'
+        }});
+
+        // verify authentication and authorization
+        index.authorizeAccess(accessControl);
+
+        done();
+    });
+
+
+
     it('loadRestifyRoutes', function (done) {
         var server = restify.createServer({});
         server.get({ url: '/asdf/:p1/:p2',
