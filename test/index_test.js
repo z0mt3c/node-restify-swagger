@@ -305,4 +305,54 @@ describe('test', function () {
 
         done();
     });
+    it('should allow same paths with different method names have different models', function (done) {
+        var server = restify.createServer();
+
+        // defining /model route where only one parameter is provided in validation
+        server.del({ url: '/model',
+            swagger: {
+                summary: 'summary',
+                notes: 'notes',
+                nickname: 'nickname',
+                responseClass: 'Model',
+            },
+            validation: {
+                id: { isRequired: true, isInteger: true, scope: 'body' }
+            }
+        }, function (req, res, next) {
+            // not called
+            false.should.be.ok;
+        });
+
+        // defining route with same path but different method - validation model is different
+        server.put({ url: '/model',
+            swagger: {
+                summary: 'summary',
+                notes: 'notes',
+                nickname: 'nickname',
+                responseClass: 'Model',
+            },
+            validation: {
+                foo: { isRequired: true, isBoolean:true, scope: 'body' },
+                bar: { isRequired: true, isBoolean:true, scope: 'body' }
+            }
+        }, function (req, res, next) {
+            // not called
+            false.should.be.ok;
+        });
+
+        index.configure(server, {
+            allowMethodInModelNames: true
+        });
+        index.loadRestifyRoutes();
+
+        //index.swagger.resources.length.should.equal(2);
+        var swaggerResource = index.swagger.resources[0];
+
+        Object.keys(swaggerResource.models).length.should.equal(2);
+        Object.keys(swaggerResource.models.DELETEModel.properties).length.should.equal(1);
+        Object.keys(swaggerResource.models.PUTModel.properties).length.should.equal(2);
+
+        done();
+    });
 });
