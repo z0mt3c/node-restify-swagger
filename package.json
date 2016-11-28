@@ -1,8 +1,8 @@
 {
-  "name": "node-restify-swagger",
-  "version": "0.1.7",
+  "name": "node-restify-swagger2",
+  "version": "0.2.0",
   "author": {
-    "name": "Timo Behrmann"
+    "name": "Josh Mohundro"
   },
   "license": "MIT",
   "keywords": [
@@ -13,7 +13,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/z0mt3c/node-restify-swagger.git"
+    "url": "git://github.com/jmohundro89/node-restify-swagger.git"
   },
   "bugs": {
     "url": "https://github.com/z0mt3c/node-restify-swagger/issues"
